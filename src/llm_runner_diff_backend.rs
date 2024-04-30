@@ -1,5 +1,6 @@
+use std::io::Write;
 use std::sync::{Arc, Mutex};
-use llama_cpp_rs::{LContext, LContextConfig, LGenerator, LSampleParams};
+use llama_cpp_rs::{LContext, LContextConfig, LGenerator, LGeneratorParams, LSampleParams};
 use rust_llm_server_common::GenerationResults;
 
 #[derive(Default)]
@@ -19,9 +20,9 @@ impl LlmRunner {
     }
 
     pub(crate) fn run(&self, prompt: String, gen_state: Arc<Mutex<GenerationState>>) -> GenerationResults {
-        let mut config = LContextConfig::new("../models/wizard-vicuna-uncensored-7b/ggml-model.q4_0.bin");
-        config.n_ctx = 512;
-        config.seed = rand::random::<i32>();
+        let mut config = LContextConfig::new("models/wizard-vicuna-uncensored-7b/Wizard-Vicuna-7B-Uncensored.Q3_K_M.gguf");
+        config.n_ctx = 1024;
+        config.seed = rand::random::<u32>();
 
         let context = LContext::new(config).unwrap();
         let mut generator = LGenerator::new(context);
@@ -30,24 +31,28 @@ impl LlmRunner {
         generator
             .generate_incremental(
                 &prompt,
-                LSampleParams {
-                    n_threads: 4,
-                    top_k: 40,
-                    top_p: 0.75,
-                    repeat_penalty: 1.1,
-                    temp: 0.25,
-                    repeat_last_n: 64,
-                    ..LSampleParams::default()
+                LGeneratorParams {
+                    worker_thread_count: 8,
+                    sample_params: LSampleParams {
+                        top_k: 40,
+                        top_p: 0.75,
+                        repeat_penalty: 1.1,
+                        temp: 0.25,
+                        repeat_history_length: 64,
+                        ..LSampleParams::default()
+                    },
+                    generate_tokens: 1024,
                 },
-                |t| {
+                |generated| {
+                    let t = generated[generated.len() - 1].as_str();
                     let mut gen_state_lock = gen_state.lock().unwrap();
                     if gen_state_lock.should_terminate {
-                        return true;
+                        return false;
                     }
-
                     print!("{t}");
+                    std::io::stdout().flush().unwrap();
 
-                    if t.contains("\n") && !current_line.is_empty() {
+                    if t.contains(&"\n".to_string()) && !current_line.is_empty() {
                         // trim the line and push it to the array
                         gen_state_lock.generated_lines.push(current_line.trim().to_string());
                         current_line = String::new();
@@ -57,12 +62,10 @@ impl LlmRunner {
                         current_line += &t.replace("#", "").replace("\n", "");
                     }
 
-                    false
+                    true
                 },
             )
             .unwrap();
-
-        generator.free();
 
         // add the rest of the generated stuff as a new line and end the execution
         let mut gen_state_lock = gen_state.lock().unwrap();

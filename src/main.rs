@@ -71,6 +71,7 @@ fn run_server(gen_state: Arc<Mutex<GenerationState>>, rx: Receiver<LlmServerMess
     let handler_llm_loop = handler.clone();
     let client_endpoint_llm_loop = client_endpoint.clone();
     let gen_state_llm_loop = gen_state.clone();
+    tx.send(LlmServerMessage::GeneratePrompt("### Instruction: Write a conversation between characters of Penguins of Madagascar. You can only use these characters: Kowalski (acts as the group strategist and gadgeteer. Kowalski is a brilliant inventor, but he cannot read (although he does carry around a clipboard upon which he records drawings of their plans).), Rico (the team's weapons and explosives specialist, who mainly communicates through grunts and squeals, but sometimes he can speak rather normally. Slightly unhinged, Rico swallows useful tools, such as dynamite, and regurgitates them when needed, to the point of regularly regurgitating objects that appear to be too large for him to have swallowed in the first place), Private (is the emotionally sensitive rookie of the group. Though younger and less experienced than the other penguins, he is the most down to earth; Private tends to offer simpler, more commonsense solutions in response to Skipper and Kowalski's complex strategies). The penguins live in the Central Park Zoo in New York. Write more than 5 lines of dialogue. Topic: . ### Response:".to_string())).unwrap();
     thread::spawn(move || {
         loop {
             let block = rx.recv().unwrap();

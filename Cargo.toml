@@ -9,6 +9,7 @@ edition = "2021"
 opt-level = 3
 
 [dependencies]
+#llama-cpp-rs = { path = "external/llama-cpp-rs" }
 llama-cpp-rs = { path = "external/llama-cpp-rs" }
 rust-llm-server-common = { path = "rust-llm-server-common" }
 message-io = "0.18.1"

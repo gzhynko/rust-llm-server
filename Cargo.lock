@@ -315,14 +315,15 @@ checksum = "01cda141df6706de531b6c46c3a33ecca755538219bd484262fa09410c13539c"
 
 [[package]]
 name = "llama-cpp-rs"
-version = "0.1.1"
+version = "0.4.0"
 dependencies = [
  "llama-cpp-sys",
 ]
 
 [[package]]
 name = "llama-cpp-sys"
-version = "1.0.1"
+version = "0.4.0"
+source = "git+https://github.com/shadowmint/llama-cpp-sys.git?tag=0.4.0#ec8a7d88b33df6077a4598dce0d03422276eef7a"
 dependencies = [
  "bindgen",
  "cmake",
