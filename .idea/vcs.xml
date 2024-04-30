@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/llama-cpp-rs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/llama-cpp-sys" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/llama-cpp-sys/external/llama.cpp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/llm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/llm/crates/ggml/sys/ggml" vcs="Git" />
+  </component>
+</project>
