@@ -5,7 +5,7 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[profile.dev.package.ggml-sys]
+[profile.dev.package.llama-cpp-rs]
 opt-level = 3
 
 [dependencies]

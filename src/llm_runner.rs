@@ -6,6 +6,7 @@ use rust_llm_server_common::{GenerationResults};
 
 #[derive(Default)]
 pub(crate) struct GenerationState {
+    pub(crate) should_terminate: bool,
     pub(crate) is_generating: bool,
     pub(crate) generated_lines: Vec<String>,
 }
@@ -19,8 +20,8 @@ impl LlmRunner {
         // load a GGML model from disk
         let llama = llm::load::<llm::models::Llama>(
             // path to GGML file
-            std::path::Path::new("models/wizard-vicuna-uncensored-7b/ggml-model.q4_0.bin"),
-            llm::VocabularySource::Model,
+            std::path::Path::new("../models/wizard-vicuna-uncensored-7b/ggml-model.q4_0.bin"),
+            llm::TokenizerSource::Embedded,
             // llm::ModelParameters
             llm::ModelParameters::default(),
             // load progress callback
@@ -42,18 +43,7 @@ impl LlmRunner {
             &mut rand::thread_rng(),
             &llm::InferenceRequest {
                 prompt: (&prompt).into(),
-                parameters: &llm::InferenceParameters {
-                    n_threads: 8,
-                    n_batch: 8,
-                    sampler: Arc::new(llm::samplers::TopPTopK {
-                        top_k: 40,
-                        top_p: 0.75,
-                        repeat_penalty: 1.1,
-                        temperature: 0.7,
-                        bias_tokens: Default::default(),
-                        repetition_penalty_last_n: 64,
-                    }),
-                },
+                parameters: &llm::InferenceParameters::default(),
                 play_back_previous_tokens: false,
                 maximum_token_count: None,
             },

@@ -19,7 +19,7 @@ impl LlmRunner {
     }
 
     pub(crate) fn run(&self, prompt: String, gen_state: Arc<Mutex<GenerationState>>) -> GenerationResults {
-        let mut config = LContextConfig::new("models/wizard-vicuna-uncensored-7b/ggml-model.q4_0.bin");
+        let mut config = LContextConfig::new("../models/wizard-vicuna-uncensored-7b/ggml-model.q4_0.bin");
         config.n_ctx = 512;
         config.seed = rand::random::<i32>();
 
@@ -44,6 +44,8 @@ impl LlmRunner {
                     if gen_state_lock.should_terminate {
                         return true;
                     }
+
+                    print!("{t}");
 
                     if t.contains("\n") && !current_line.is_empty() {
                         // trim the line and push it to the array

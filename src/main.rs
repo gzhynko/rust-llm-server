@@ -61,7 +61,7 @@ fn run_llm_model(gen_state: Arc<Mutex<GenerationState>>, rx: Receiver<LlmServerM
 fn run_server(gen_state: Arc<Mutex<GenerationState>>, rx: Receiver<LlmServerMessage>, tx: Sender<LlmServerMessage>) {
     let (handler, node_listener) = node::split::<()>();
 
-    let listen_addr = "10.140.153.73:5341";
+    let listen_addr = "127.0.0.1:5341";
     handler.network().listen(Transport::FramedTcp, listen_addr).unwrap();
 
     println!("Llm server running at {}", listen_addr);
